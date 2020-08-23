@@ -1,7 +1,7 @@
 /*
 Authors:
 Divya Gupta B17083
-Komal Mahale B17085
+Komal Mahale B17089
 Piyush Bafna B17020
 
 To run the hadoop program use
