@@ -1,4 +1,9 @@
 /*
+Authors:
+Divya Gupta B17083
+Komal Mahale B17085
+Piyush Bafna B17020
+
 To run the hadoop program use
 1) javac -cp /usr/local/hadoopUser/hadoop-2.9.0/share/hadoop/mapreduce/hadoop-mapreduce-client-core-2.9.0.jar:/usr/local/hadoopUser/hadoop-2.9.0/share/hadoop/common/hadoop-common-2.9.0.jar:/usr/local/hadoopUser/hadoop-2.9.0/share/hadoop/common/lib/commons-cli-1.2.jar -d /Users/bhawesh/Desktop/divya/assign_db/classfolder /Users/bhawesh/Desktop/divya/assign_db/assign1.java
 2) jar -cvf /Users/bhawesh/Desktop/divya/assign_db/assign1.jar -C /Users/bhawesh/Desktop/divya/assign_db/classfolder .
@@ -75,8 +80,39 @@ public class assign1
          context.write(new Text(tid), new Text(result));
       }
    }
-   
-   
+   //partition class
+   public static class Partitionerclass extends
+   Partitioner < Text, Text >
+   {
+      @Override
+      public int getPartition(Text key, Text value, int numReduceTasks)
+      {
+         String[] str = value.toString().split(" ");
+         int no_items = str.length-1;
+         
+         if(no_items>=1 & no_items<=10)
+          {
+            return 0;
+          }
+          else if(no_items>=11 & no_items<=20)
+          {
+            return 1 % numReduceTasks;
+          }
+          else if(no_items>=21 & no_items<=30)
+          {
+            return 2 % numReduceTasks;
+          }
+          else if(no_items>=31 & no_items<=40)
+          {
+            return 3 % numReduceTasks;
+          }
+          else
+          {
+            return 4 % numReduceTasks;
+          }
+      }
+   }
+
    public static void main(String[] args) throws Exception
     {    
       Configuration conf = new Configuration();
@@ -88,8 +124,7 @@ public class assign1
       job.setNumReduceTasks(5);
       job.setMapOutputKeyClass(Text.class);
       job.setMapOutputValueClass(Text.class);
-      
-      //set partitioner statement
+      job.setPartitionerClass(Partitionerclass.class);
       job.setReducerClass(ReduceClass.class);
       job.setInputFormatClass(TextInputFormat.class);
       job.setOutputFormatClass(TextOutputFormat.class);
